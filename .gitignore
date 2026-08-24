@@ -1,0 +1,29 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# Environment
+.env
+.env.*
+
+# Storage (dados locais)
+storage/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Agents / Gemini local config
+.agents/
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store

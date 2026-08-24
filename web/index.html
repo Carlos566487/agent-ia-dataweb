@@ -1,0 +1,698 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manual do Sistema DataWeb</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* ── PALETA MODO ESCURO (Padrão) ── */
+    --bg-main: #1A1D24;
+    --bg-gradient-center: #2a2e39;
+    --bg-panel: #242832;
+    --diniz-red: #E31A3C;
+    --text-primary: #FFFFFF;
+    --text-secondary: #A1A7B3;
+    
+    --card-bg: #FFFFFF;
+    --card-text-title: #000000;
+    --card-text-desc: #555555;
+    
+    --header-bg: rgba(26, 29, 36, 0.85);
+    --header-border: rgba(255,255,255,0.05);
+    --glow-color: rgba(227, 26, 60, 0.12);
+    --form-shadow: rgba(0,0,0,0.5);
+    
+    --user-bubble-bg: rgba(227, 26, 60, 0.15);
+    --agent-bubble-bg: var(--bg-panel);
+    --agent-bubble-border: rgba(255,255,255,0.08);
+    
+    --details-bg: rgba(0,0,0,0.25);
+    --details-border: rgba(255,255,255,0.08);
+    --pre-bg: rgba(0,0,0,0.4);
+    --trecho-border: rgba(255,255,255,0.05);
+    --trecho-text: #ccc;
+    --trecho-pre-text: #aaa;
+  }
+
+  :root.light {
+    /* ── PALETA MODO CLARO ── */
+    --bg-main: #F4F6F8;
+    --bg-gradient-center: #FFFFFF;
+    --bg-panel: #FFFFFF;
+    --diniz-red: #E31A3C;
+    --text-primary: #111418;
+    --text-secondary: #5A6474;
+    
+    --card-bg: #F9FAFB;
+    --card-text-title: #000000;
+    --card-text-desc: #444444;
+    
+    --header-bg: rgba(255, 255, 255, 0.9);
+    --header-border: rgba(0,0,0,0.08);
+    --glow-color: rgba(227, 26, 60, 0.1);
+    --form-shadow: rgba(0,0,0,0.08);
+    
+    --user-bubble-bg: rgba(227, 26, 60, 0.08);
+    --agent-bubble-bg: #FFFFFF;
+    --agent-bubble-border: rgba(0,0,0,0.08);
+    
+    --details-bg: rgba(0,0,0,0.02);
+    --details-border: rgba(0,0,0,0.08);
+    --pre-bg: rgba(0,0,0,0.04);
+    --trecho-border: rgba(0,0,0,0.05);
+    --trecho-text: #333;
+    --trecho-pre-text: #555;
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0; padding: 0;
+  }
+
+  body {
+    background: radial-gradient(circle at top center, var(--bg-gradient-center) 0%, var(--bg-main) 70%);
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    font-family: 'Montserrat', sans-serif;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Mantém a tela sem barra de rolagem global */
+    transition: background 0.3s, color 0.3s;
+  }
+
+  /* ── Header ─────────────────────────────────────────────── */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    height: 70px; /* Reduzido levemente para otimizar espaço */
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--header-border);
+    background: var(--header-bg);
+    backdrop-filter: blur(10px);
+    position: relative;
+    z-index: 10;
+    transition: background 0.3s, border-color 0.3s;
+  }
+
+  .logo img {
+    height: 38px;
+    display: block;
+  }
+
+  .header-title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--diniz-red);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  #estado {
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  #btn-nova-conversa {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--diniz-red);
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    padding: 10px 18px;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  #btn-nova-conversa:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--glow-color);
+  }
+
+  .btn-icon {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s, transform 0.2s;
+  }
+  
+  .btn-icon:hover { 
+    color: var(--diniz-red);
+    transform: scale(1.05);
+  }
+
+  /* Controle de visualização dos ícones do botão de tema */
+  #icone-tema-sun { display: block; }
+  #icone-tema-moon { display: none; }
+  :root.light #icone-tema-sun { display: none; }
+  :root.light #icone-tema-moon { display: block; }
+
+  /* ── Main Chat Area ─────────────────────────────────────── */
+  #conversa {
+    flex: 1;
+    overflow-y: auto;
+    /* Ajustado para subir o conteúdo levemente na primeira tela */
+    padding: 24px 20px 100px 20px; 
+    scroll-behavior: smooth;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* ── Panel Boas Vindas ──────────────────────────────────── */
+  .welcome-panel {
+    background: var(--bg-panel);
+    border-radius: 12px;
+    padding: 32px 40px; /* Paddings otimizados para caber sem scroll */
+    box-shadow: 0 0 25px var(--glow-color);
+    max-width: 960px;
+    width: 100%;
+    margin-bottom: 20px; /* Reduzido para caber melhor na tela inicial */
+    transition: background 0.3s, box-shadow 0.3s;
+  }
+
+  .welcome-panel h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .welcome-panel > p {
+    color: var(--text-secondary);
+    font-size: 15px;
+    margin-bottom: 28px;
+    line-height: 1.5;
+  }
+
+  /* ── Suggestions Grid ───────────────────────────────────── */
+  .sugestoes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px; /* Gap ajustado */
+    margin-bottom: 32px;
+  }
+
+  .card-sugestao {
+    background: var(--card-bg);
+    border: 1px solid var(--diniz-red);
+    border-radius: 8px;
+    padding: 20px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s, background 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .card-sugestao:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 18px var(--glow-color);
+  }
+
+  .card-icon {
+    color: var(--diniz-red);
+    margin-bottom: 12px;
+  }
+
+  .card-sugestao h3 {
+    color: var(--card-text-title);
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .card-sugestao p {
+    color: var(--card-text-desc);
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  /* ── Recentes & Populares ───────────────────────────────── */
+  .recentes-populares h2 {
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  .lista-recentes {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .item-recente {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-secondary);
+    font-size: 14px;
+    cursor: pointer;
+    transition: color 0.2s;
+    padding: 4px 0;
+  }
+
+  .item-recente:hover {
+    color: var(--diniz-red);
+  }
+
+  .item-recente svg {
+    opacity: 0.8;
+  }
+
+  /* ── Footer Form ────────────────────────────────────────── */
+  footer {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    padding: 20px 24px;
+    background: linear-gradient(to top, var(--bg-main) 70%, transparent);
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+    transition: background 0.3s;
+  }
+
+  #form-container {
+    width: 100%;
+    max-width: 800px;
+    pointer-events: auto;
+  }
+
+  #form {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--bg-main);
+    border: 1px solid var(--diniz-red);
+    border-radius: 50px;
+    padding: 6px 6px 6px 20px;
+    box-shadow: 0 10px 30px var(--form-shadow);
+    transition: background 0.3s, box-shadow 0.3s;
+  }
+
+  #entrada {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 15px;
+    outline: none;
+  }
+
+  #entrada::placeholder {
+    color: var(--text-secondary);
+  }
+
+  #enviar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--diniz-red);
+    border: none;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    flex-shrink: 0;
+  }
+
+  #enviar:hover:not(:disabled) {
+    background: #c11631;
+  }
+  
+  #enviar:active:not(:disabled) {
+    transform: scale(0.95);
+  }
+  
+  #enviar:disabled {
+    opacity: 0.5; cursor: default;
+  }
+
+  /* ── Chat Messages (Linhas) ─────────────────────────────── */
+  .linha-wrapper {
+    width: 100%;
+    max-width: 900px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .linha {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 32px;
+    max-width: 85%;
+  }
+
+  .linha.usuario {
+    align-self: flex-end;
+    align-items: flex-end;
+  }
+
+  .linha.agente {
+    align-self: flex-start;
+    align-items: flex-start;
+  }
+
+  .papel {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    margin-left: 4px;
+    margin-right: 4px;
+  }
+
+  .balao {
+    padding: 18px 24px;
+    border-radius: 16px;
+    font-size: 15px;
+    line-height: 1.6;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    transition: background 0.3s, color 0.3s, border-color 0.3s;
+  }
+
+  .linha.usuario .balao {
+    background: var(--user-bubble-bg);
+    border: 1px solid var(--diniz-red);
+    color: var(--text-primary);
+    border-bottom-right-radius: 4px;
+  }
+
+  .linha.agente .balao {
+    background: var(--agent-bubble-bg);
+    border: 1px solid var(--agent-bubble-border);
+    color: var(--text-primary);
+    border-bottom-left-radius: 4px;
+  }
+
+  /* Typing indicator */
+  .typing { display: inline-flex; gap: 6px; align-items: center; padding: 4px; }
+  .typing span { width: 6px; height: 6px; border-radius: 50%; background: var(--text-secondary); animation: blink 1.2s infinite; }
+  .typing span:nth-child(2) { animation-delay: .2s; }
+  .typing span:nth-child(3) { animation-delay: .4s; }
+  @keyframes blink { 0%, 80%, 100% { opacity: .3; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-3px); } }
+
+  /* Fontes consultadas */
+  details {
+    margin-bottom: 16px;
+    border: 1px solid var(--details-border);
+    border-radius: 10px;
+    background: var(--details-bg);
+    overflow: hidden;
+    width: 100%;
+    transition: background 0.3s, border-color 0.3s;
+  }
+
+  summary {
+    cursor: pointer; padding: 14px 20px; font-size: 13px; font-weight: 500;
+    color: var(--text-secondary); list-style: none; display: flex; align-items: center; gap: 8px;
+  }
+  
+  summary::-webkit-details-marker { display: none; }
+  
+  .trecho {
+    padding: 14px 20px; border-top: 1px solid var(--trecho-border); font-size: 13px; color: var(--trecho-text); line-height: 1.5;
+  }
+  .trecho b { color: var(--diniz-red); font-weight: 600; }
+  .trecho .meta { color: var(--text-secondary); font-size: 12px; }
+  .trecho pre {
+    margin-top: 12px; padding: 14px; background: var(--pre-bg); border-radius: 6px;
+    white-space: pre-wrap; overflow-wrap: anywhere; font-family: monospace; color: var(--trecho-pre-text);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <img src="/static/logo-diniz.png" alt="Diniz Franchising">
+  </div>
+  <div class="header-title">MANUAL DO SISTEMA DATAWEB</div>
+  <div class="header-actions">
+    <span id="estado">carregando...</span>
+    <button id="btn-nova-conversa">
+      <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg>
+      Nova Conversa
+    </button>
+    <button id="btn-tema" class="btn-icon" aria-label="Alternar tema">
+      <!-- Ícone Sol (Modo Escuro ativado) -->
+      <svg id="icone-tema-sun" width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+      </svg>
+      <!-- Ícone Lua (Modo Claro ativado) -->
+      <svg id="icone-tema-moon" width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<main id="conversa">
+  <div id="boas-vindas" class="welcome-panel">
+    <h1>Como posso ajudar?</h1>
+    <p>Faça uma pergunta sobre o Manual do Módulo Caixa DataWeb ou escolha uma das sugestões abaixo.</p>
+
+    <div class="sugestoes-grid">
+      <!-- Cartão Venda -->
+      <div class="btn-sugestao card-sugestao" data-pergunta="Como faço uma venda no sistema DataWeb? Como resolver uma situação de venda com pendências.">
+        <div class="card-icon">
+          <svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+        </div>
+        <h3>Venda</h3>
+        <p>Como faço uma venda no sistema DataWeb? Como resolver uma situação de venda com pendências.</p>
+      </div>
+
+      <!-- Cartão Garantia -->
+      <div class="btn-sugestao card-sugestao" data-pergunta="Como faço um processo de Garantia no sistema DataWeb? Guia completo para troca e devolução de produtos em garantia.">
+        <div class="card-icon">
+          <svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+        </div>
+        <h3>Garantia</h3>
+        <p>Como faço um processo de Garantia no sistema DataWeb? Guia completo para troca e devolução de produtos em garantia.</p>
+      </div>
+
+      <!-- Cartão Devolução -->
+      <div class="btn-sugestao card-sugestao" data-pergunta="Como faço um processo de Devolução no sistema DataWeb? Instruções detalhadas para o procedimento de cancelamento de venda.">
+        <div class="card-icon">
+          <svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
+        </div>
+        <h3>Devolução</h3>
+        <p>Como faço um processo de Devolução no sistema DataWeb? Instruções detalhadas para o procedimento de cancelamento de venda.</p>
+      </div>
+    </div>
+
+    <div class="recentes-populares">
+      <h2>Recentes & Populares</h2>
+      <ul class="lista-recentes">
+        <li class="btn-sugestao item-recente" data-pergunta="como faço a baixa de carnê?">
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+          Ex.: como faço a baixa de carnê?
+        </li>
+        <li class="btn-sugestao item-recente" data-pergunta="como faço um estorno de venda em dinheiro?">
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
+          Ex.: como faço um estorno de venda em dinheiro?
+        </li>
+      </ul>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div id="form-container">
+    <form id="form">
+      <input id="entrada" placeholder="Ex.: como faço o cancelamento de uma venda?" autocomplete="off" autofocus>
+      <button id="enviar" type="submit" aria-label="Enviar">
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+        </svg>
+      </button>
+    </form>
+  </div>
+</footer>
+
+<script>
+const htmlEl     = document.documentElement;
+const btnTema    = document.getElementById('btn-tema');
+const conversa   = document.getElementById('conversa');
+const form       = document.getElementById('form');
+const entrada    = document.getElementById('entrada');
+const enviar     = document.getElementById('enviar');
+const estado     = document.getElementById('estado');
+const boasVindas = document.getElementById('boas-vindas');
+let sessao       = Math.random().toString(36).slice(2);
+
+// ── Tema Claro / Escuro ──
+const temaSalvo = localStorage.getItem('dataweb-tema');
+if (temaSalvo === 'light') {
+  htmlEl.classList.add('light');
+}
+
+btnTema.addEventListener('click', () => {
+  htmlEl.classList.toggle('light');
+  if (htmlEl.classList.contains('light')) {
+    localStorage.setItem('dataweb-tema', 'light');
+  } else {
+    localStorage.setItem('dataweb-tema', 'dark');
+  }
+});
+
+// ── Status do servidor ──
+fetch('/saude').then(r => r.json())
+  .then(d => {
+    estado.textContent = `${d.chunks} trechos · ${d.modelo}`;
+  })
+  .catch(() => estado.textContent = 'servidor indisponível');
+
+// ── Botões de sugestão (Cards e Lista) ──
+document.querySelectorAll('.btn-sugestao').forEach(btn => {
+  btn.addEventListener('click', () => {
+    entrada.value = btn.dataset.pergunta;
+    entrada.focus();
+    form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+  });
+});
+
+// ── Helpers DOM ──
+function esconderBoasVindas() {
+  if (boasVindas) boasVindas.style.display = 'none';
+}
+
+function rolarParaFim() {
+  requestAnimationFrame(() => {
+    conversa.scrollTop = conversa.scrollHeight;
+  });
+}
+
+function criarLinha(papel, rotulo) {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'linha-wrapper';
+
+  const div = document.createElement('div');
+  div.className = 'linha ' + papel;
+  div.innerHTML = `<div class="papel">${rotulo}</div><div class="balao"></div>`;
+  
+  wrapper.appendChild(div);
+  conversa.appendChild(wrapper);
+  rolarParaFim();
+  return div;
+}
+
+function typingIndicator() {
+  return '<div class="typing"><span></span><span></span><span></span></div>';
+}
+
+function renderFontes(div, lista) {
+  if (!lista.length) return;
+  const d = document.createElement('details');
+  d.open = true;
+  d.innerHTML =
+    `<summary>📋 Base consultada — ${lista.length} trecho${lista.length > 1 ? 's' : ''}</summary>` +
+    lista.map((f, i) => `
+      <div class="trecho">
+        <b>[${i + 1}]</b>
+        <span class="meta"> ${f.fonte} — p.${f.pagina}${f.assunto ? ' · ' + f.assunto : ''} <em>(relevância: ${f.score})</em></span>
+        <pre></pre>
+      </div>`).join('');
+  d.querySelectorAll('pre').forEach((pre, i) => pre.textContent = lista[i].texto);
+  div.insertBefore(d, div.firstChild);
+  rolarParaFim();
+}
+
+// ── Nova Conversa ──
+document.getElementById('btn-nova-conversa').addEventListener('click', () => {
+  conversa.querySelectorAll('.linha-wrapper').forEach(l => l.remove());
+  if (boasVindas) boasVindas.style.display = 'block';
+  sessao = Math.random().toString(36).slice(2);
+  entrada.value = '';
+  entrada.focus();
+  rolarParaFim();
+});
+
+// ── Submit ──
+form.addEventListener('submit', async e => {
+  e.preventDefault();
+  const pergunta = entrada.value.trim();
+  if (!pergunta) return;
+
+  esconderBoasVindas();
+  entrada.value = '';
+  enviar.disabled = true;
+
+  // Mensagem do usuário
+  criarLinha('usuario', 'você').querySelector('.balao').textContent = pergunta;
+
+  // Balão do agente
+  const divAgente = criarLinha('agente', 'agente');
+  const balao = divAgente.querySelector('.balao');
+  balao.innerHTML = typingIndicator();
+
+  try {
+    const r = await fetch('/perguntar', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ texto: pergunta, sessao }),
+    });
+
+    const leitor = r.body.getReader();
+    const dec = new TextDecoder();
+    let buffer = '', primeiro = true;
+
+    while (true) {
+      const { done, value } = await leitor.read();
+      if (done) break;
+      buffer += dec.decode(value, { stream: true });
+      const partes = buffer.split('\n\n');
+      buffer = partes.pop();
+      for (const parte of partes) {
+        if (!parte.startsWith('data: ')) continue;
+        const ev = JSON.parse(parte.slice(6));
+        if (ev.tipo === 'fontes') renderFontes(divAgente, ev.dados);
+        if (ev.tipo === 'texto') {
+          if (primeiro) { balao.textContent = ''; primeiro = false; }
+          balao.textContent += ev.dados;
+          rolarParaFim();
+        }
+      }
+    }
+    if (primeiro) balao.textContent = '(sem resposta)';
+  } catch (err) {
+    balao.textContent = 'Erro de conexão: ' + err.message;
+  }
+
+  enviar.disabled = false;
+  entrada.focus();
+});
+</script>
+</body>
+</html>
