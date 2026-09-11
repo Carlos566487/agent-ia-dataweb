@@ -1,45 +1,53 @@
 # Agente IA DataWeb — Módulo Caixa
 
-Este projeto implementa um **assistente virtual baseado em RAG** (Retrieval-Augmented Generation) para responder a dúvidas operacionais do sistema DataWeb (especificamente o Módulo Caixa), seguindo o padrão de design visual **Diniz**.
+Este projeto implementa um **assistente virtual corporativo baseado em RAG** (Retrieval-Augmented Generation) para responder a dúvidas operacionais do sistema DataWeb (com foco no Módulo Caixa e processos de Frente de Loja), seguindo o padrão de design visual e identidade das **Óticas Diniz**.
 
-O sistema consome os arquivos locais de conhecimento (PDF e Markdown), gera *embeddings* semânticos e armazena os fragmentos indexados utilizando o banco de dados ChromaDB. O back-end é estruturado usando FastAPI, enquanto a interface web foi elaborada com foco na identidade da marca, apresentando respostas de forma limpa, direta, em passos e compatível com temas Claro e Escuro.
-
----
-
-## Estrutura Técnica
-
-*   **Linguagem & Ambiente**: Python 3.14 (Ambiente Virtual do Windows).
-*   **Vector Database**: ChromaDB (armazenamento persistente na pasta `storage/chroma`).
-*   **Embeddings**: Modelo multilíngue de alta precisão `intfloat/multilingual-e5-base` fornecido pelo *HuggingFace*.
-*   **Geração (LLM)**: O provedor primário configurado é o Gemini (Google) no modelo `gemini-3.6-flash`.
-*   **Web API**: FastAPI + Uvicorn com streaming de respostas e eventos para a UI (Server-Sent Events).
-*   **Front-end**: Arquivo HTML estático servido pela API (`web/index.html`), mantendo os tokens visuais de estilo Diniz com integração dinâmica do `JS`.
-*   **Estrutura RAG Modular**: A indexação é inteligente e divide as classes em: Leitores Sem Repetição, Fontes PDF/Markdown, Fragmentador Semântico e Normalizadores do Idioma PT-BR.
+O sistema consome a base de conhecimento local (manuais em PDF e documentos curados em Markdown com metadados semânticos), gera *embeddings* vetoriais de alta precisão e armazena os fragmentos indexados no banco de dados **ChromaDB**. O back-end é desenvolvido em **FastAPI** com streaming em tempo real via **Server-Sent Events (SSE)**, enquanto a interface web oferece respostas escaneáveis, arejadas, com títulos temáticos com emojis, marcadores claros e suporte a temas **Claro** e **Escuro**.
 
 ---
 
-## Requisitos de Sistema
+## 🚀 Principais Recursos e Alterações Recentes
 
-*   **Sistema Operacional:** Windows
-*   **Python:** 3.14
-*   Dependências de sistema essenciais listadas no `requirements.txt` (incluindo PyTorch, sentence-transformers e FastAPI).
+* **Geração com Gemini 3.5 Flash Lite:** Provedor primário atualizado para `gemini-3.5-flash-lite`, entregando respostas instantâneas com altíssima disponibilidade e suporte a configuração dinâmica via variável `GEMINI_MODEL`.
+* **Resiliência e Retentativas:** Tratamento com backoff exponencial automático para erros temporários de limite de taxa (`429 / RESOURCE_EXHAUSTED`) e indisponibilidade de pico (`503 / UNAVAILABLE`).
+* **Novo Padrão Visual e Escaneabilidade:**
+  * **Títulos de Seção com Emojis:** Identificação visual imediata (ex.: `**💳 Pagamentos**`, `**💰 Venda com Saldo a Receber**`, `**⚠️ Observação**`).
+  * **Parágrafos Curtos e Arejados:** Frases diretas (1–2 por parágrafo) com espaçamento vertical duplo, evitando blocos densos de texto.
+  * **Marcadores Estruturados:** Itens e métodos listados em linhas individuais no padrão `• **Nome:** Descrição.`.
+  * **Negrito Estratégico:** Destaque pontual exclusivamente em nomes de botões, telas, menus, atalhos (`F6`, `Ctrl+R`) e termos chave.
+  * **Seção de Observação Padronizada:** Ressalvas ou detalhes não constantes na base são apresentados em um bloco dedicado `**⚠️ Observação**` ao final.
+* **Pós-processamento de Streaming (`src/formatador.py`):** Sanitizador leve que reorganiza marcadores colados, títulos sem quebra e cabeçalhos Markdown em tempo real sem degradar a latência do stream.
+* **Frontend Aprimorado (`web/index.html`):**
+  * Estilo `.balao` atualizado com `white-space: pre-wrap;` e tipografia `strong`, preservando quebras de linha e estrutura em qualquer resolução.
+  * Função `formatarMarkdown()` nativa em JS com sanitização HTML contra XSS e conversão de negrito, itálico e códigos inline durante o streaming.
+* **Base Vetorial Persistente Indexada:** Ingestão de 146 fragmentos vetoriais a partir de manuais em PDF e markdowns enriquecidos.
 
 ---
 
-## Como Configurar o Ambiente e Rodar
+## 🛠️ Estrutura Técnica
 
-### 1. Criando e ativando o Ambiente Virtual (Windows PowerShell)
+* **Linguagem & Ambiente:** Python 3.14 (Ambiente Windows).
+* **Vector Database:** ChromaDB (armazenamento persistente local na pasta `storage/chroma`).
+* **Embeddings:** Modelo multilíngue `intfloat/multilingual-e5-base` via *SentenceTransformers* (com prefixos `passage:` e `query:`).
+* **Provedores de LLM:**
+  * **Google Gemini:** Modelo padrão `gemini-3.5-flash-lite` (via biblioteca oficial `google-genai`).
+  * **Anthropic Claude:** Provedor alternativo com `claude-opus-5` (via `anthropic`).
+* **Web API:** FastAPI + Uvicorn com streaming assíncrono Server-Sent Events (`text/event-stream`).
+* **Front-end:** Interface Single Page (`web/index.html`), tokens visuais das Óticas Diniz, atalhos rápidos (`VENDA`, `GARANTIA`, `DEVOLUÇÃO`) e alternador de tema Claro/Escuro.
+* **Estrutura RAG Modular:** Pipeline com normalizador para PT-BR, leitor de PDFs com remoção de cabeçalhos/rodapés repetitivos, divisor de frases inteligente e fragmentador semântico.
 
-Caso ainda não tenha ativado ou criado, execute na raiz do projeto:
+---
+
+## 📋 Pré-requisitos e Instalação
+
+### 1. Criar e ativar o Ambiente Virtual (PowerShell)
 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 ```
 
-### 2. Instalação das Dependências
-
-Com o ambiente ativado, atualize o pip e instale:
+### 2. Instalar Dependências
 
 ```powershell
 python -m pip install --upgrade pip
@@ -47,59 +55,124 @@ pip install -r requirements.txt
 pip install -e .
 ```
 
-> **Atenção:** A instalação dos pacotes de IA local (como `torch` e `chromadb`) pode demorar alguns minutos dependendo da sua rede.
+### 3. Configurar Credenciais de Ambiente
 
-### 3. Configuração de Credenciais
+Copie o arquivo de exemplo ou crie o `.env` na raiz do projeto:
 
-No arquivo `.env` localizado na raiz do projeto, garanta que a chave da API do Google Gemini está preenchida corretamente:
-
-```env
-GOOGLE_GENERATIVE_AI_API_KEY="SUA_CHAVE_AQUI"
+```powershell
+Copy-Item .env.example .env
 ```
 
-### 4. Indexação Inicial (Necessário apenas uma vez ou ao adicionar novos arquivos)
+Edite o arquivo `.env` inserindo sua chave de API:
 
-O sistema exige que a base de dados do ChromaDB possua o mapeamento indexado. Execute o script abaixo, apontando para a pasta onde ficam os PDFs e arquivos Markdown (pasta `documentos/`):
+```env
+# Chave de API para o Google Gemini (provedor padrão)
+GOOGLE_GENERATIVE_AI_API_KEY="SUA_CHAVE_AQUI"
+
+# Modelo Gemini opcional (padrão: gemini-3.5-flash-lite)
+# GEMINI_MODEL="gemini-3.5-flash-lite"
+
+# Chave de API para a Anthropic Claude (provedor alternativo)
+ANTHROPIC_API_KEY=
+
+# Desativa alertas de symlinks do HuggingFace no Windows
+HF_HUB_DISABLE_SYMLINKS_WARNING=1
+```
+
+---
+
+## 📦 Indexação da Base de Conhecimento
+
+A base de conhecimento fica localizada na pasta `documentos/`. Para indexar os manuais no ChromaDB:
 
 ```powershell
 python index.py indexar documentos
 ```
 
-Isso fará o parse semântico dos arquivos e salvará localmente as bases vetorizadas.
+Saída esperada:
+* `MANUAL OPERACIONAL DO SISTEMA DATAWEB – MÓDULO CAIXA.pdf`: 98 fragmentos
+* `39 arquivos Markdown operacionais (*.md)`: 209 fragmentos (módulos Caixa, Pedidos, Faturamento, Estoque, Financeiro, OptFácil, Infraestrutura/Periféricos, etc.)
+* **Total na base:** 307 fragmentos em 40 documentos indexados
+
+*(A indexação só precisa ser refeita quando novos arquivos forem adicionados ou alterados na pasta `documentos/`)*.
 
 ---
 
-## Utilizando a Aplicação
+## 💻 Como Utilizar
 
-O projeto possui comandos CLI para teste de terminal e para levantar o servidor WEB.
+### Modo 1: Interface Web (Recomendado)
 
-### Modo Interface Web (Recomendado)
-
-Levante o servidor HTTP no Uvicorn com a seguinte linha de comando:
+Inicie o servidor HTTP com Uvicorn:
 
 ```powershell
 python index.py servir --porta 8000
 ```
-*   Acesse no seu navegador: **[http://127.0.0.1:8000](http://127.0.0.1:8000)**
-*   A aplicação disponibiliza três botões rápidos ("VENDA", "GARANTIA" e "DEVOLUÇÃO") além de uma caixa de diálogo fluída e responsiva.
-*   **Dark Mode**: Botão funcional no canto superior direito para alternar a interface entre temas Claro e Escuro.
 
-### Modo Busca e Modo Interativo no Console (CLI)
+* Acesse no navegador: **[http://127.0.0.1:8000](http://127.0.0.1:8000)**
+* Recursos disponíveis:
+  * Diálogo fluído com respostas token a token em tempo real.
+  * Botões rápidos de sugestão na tela inicial.
+  * Seção expansível **Base consultada** exibindo as fontes, páginas e notas de relevância de cada trecho utilizado.
+  * Alternância entre temas Claro e Escuro com persistência local.
 
-Se você precisa consultar ou debugar pelo terminal, basta executar:
+### Modo 2: Busca Rápida via Terminal (CLI)
 
-*   **Busca em lote único (CLI):**
-    ```powershell
-    python index.py buscar "como abrir o caixa"
-    ```
-*   **Sessão interativa (CLI):**
-    ```powershell
-    python index.py console
-    ```
+```powershell
+python index.py buscar "como abrir o caixa"
+```
+
+### Modo 3: Console Interativo no Terminal (CLI)
+
+```powershell
+python index.py console
+```
 
 ---
 
-## Observações Extras e Troubleshooting
+## 📂 Estrutura de Diretórios
 
-*   **`Warning: HF Hub requests are unauthenticated`:** Ao subir a aplicação ou re-indexar, o HuggingFace pode apresentar este log. Isso é meramente um _warning_ do terminal por não possuir a chave de token da própria base `huggingface` para download do modelo embeddings local. O modelo funciona sem essa chave em velocidade nominal padrão.
-*   **Problemas de Symlinks:** No Windows, o HuggingFace pode disparar _warnings_ do tipo `cache-system uses symlinks...`. Adicionar `HF_HUB_DISABLE_SYMLINKS_WARNING=1` no seu `.env` o deixará limpo de avisos.
+```
+agent-ia-dataweb/
+├── documentos/                            # Base de conhecimento oficial
+│   ├── MANUAL OPERACIONAL...CAIXA.pdf     # Manual operacional original
+│   ├── RAG_dataweb_modulo_caixa.md        # Documento curado com metadados do Caixa
+│   └── RAG_dataweb_garantia...credito.md  # Documento curado de Garantia/Devolução
+├── src/                                   # Código-fonte da aplicação
+│   ├── agente.py                          # Lógica do Agente e System Prompt padronizado
+│   ├── ambiente.py                        # Carregamento de variáveis do .env
+│   ├── api.py                             # API FastAPI e endpoints SSE
+│   ├── base_vetorial.py                   # Integração com ChromaDB
+│   ├── contratos.py                       # Protocolos e interfaces (SOLID)
+│   ├── dominio.py                         # Entidades Chunk e Resultado
+│   ├── embedding.py                       # Embeddings multilíngues (SentenceTransformers)
+│   ├── fabrica.py                         # Injeção de dependências e fábrica de componentes
+│   ├── fonte_markdown.py                  # Extrator de chunks com JSON de metadados
+│   ├── fonte_pdf.py                       # Extrator de chunks de arquivos PDF
+│   ├── formatador.py                      # Pós-processador visual e corretor de fluxo
+│   ├── gerador_claude.py                  # Provedor LLM Anthropic Claude
+│   ├── gerador_gemini.py                  # Provedor LLM Google Gemini com retentativas
+│   ├── indexador.py                       # Orquestrador de indexação de arquivos
+│   ├── leitor_pdf.py                      # Leitor de páginas com PyPDF
+│   ├── leitor_sem_repeticao.py            # Filtro de cabeçalhos e rodapés repetitivos
+│   ├── normalizador.py                    # Normalizador de texto para PT-BR
+│   ├── pesquisa.py                        # Busca semântica vetorial
+│   └── separador.py                       # Separador de frases resiliente a abreviações
+├── storage/                               # Banco vetorial persistente ChromaDB
+│   └── chroma/
+├── web/                                   # Frontend estático
+│   ├── index.html                         # Interface do chat com suporte a temas e markdown
+│   └── logo-diniz.png                     # Identidade visual Óticas Diniz
+├── .env.example                           # Modelo de configuração de credenciais
+├── index.py                               # Ponto de entrada CLI e servidor
+├── pyproject.toml                         # Metadados do projeto Python
+└── requirements.txt                       # Dependências do projeto
+```
+
+---
+
+## 🔍 Solução de Problemas Comuns
+
+* **`Warning: HF Hub requests are unauthenticated`:** Log informativo do HuggingFace ao baixar os pesos locais de embeddings. O modelo funciona normalmente sem a chave.
+* **`Symlink Warning` no Windows:** Definir `HF_HUB_DISABLE_SYMLINKS_WARNING=1` no arquivo `.env` para silenciar os avisos.
+* **Erro 429 ou 503 na API de IA:** O sistema possui retentativas automáticas integradas. Se persistir, verifique a cota da sua chave no painel do Google AI Studio.
+

@@ -25,18 +25,42 @@ class FonteMarkdown:
 
     def chunks(self, caminho: Path) -> Iterator[Chunk]:
         texto = caminho.read_text(encoding="utf-8")
+        teve_chunk = False
         for posicao, (titulo, corpo) in enumerate(self._secoes(texto)):
             dados = self._metadados(corpo)
-            if dados is None:
-                continue
-            conteudo = self._conteudo(corpo, dados.get("titulo", titulo))
-            for parte, fragmento in enumerate(self._dentro_do_limite(conteudo)):
+            if dados is not None:
+                conteudo = self._conteudo(corpo, dados.get("titulo", titulo))
+                for parte, fragmento in enumerate(self._dentro_do_limite(conteudo)):
+                    teve_chunk = True
+                    yield Chunk(
+                        text=fragmento,
+                        source=caminho.name,
+                        page=self._pagina(dados),
+                        position=posicao * 100 + parte,
+                        extra=self._extra(dados),
+                    )
+            else:
+                limpo = self.ROTULOS.sub("", corpo).strip()
+                if limpo:
+                    conteudo = f"{titulo}\n{limpo}"
+                    for parte, fragmento in enumerate(self._dentro_do_limite(conteudo)):
+                        teve_chunk = True
+                        yield Chunk(
+                            text=fragmento,
+                            source=caminho.name,
+                            page=1,
+                            position=posicao * 100 + parte,
+                            extra={"assunto": titulo},
+                        )
+
+        if not teve_chunk:
+            for posicao, fragmento in enumerate(self.fragmentador.fragmentar(texto)):
                 yield Chunk(
                     text=fragmento,
                     source=caminho.name,
-                    page=self._pagina(dados),
-                    position=posicao * 100 + parte,
-                    extra=self._extra(dados),
+                    page=1,
+                    position=posicao,
+                    extra={"assunto": caminho.stem.replace("RAG_dataweb_", "").replace("_", " ").title()},
                 )
 
     def _secoes(self, texto: str) -> Iterator[tuple[str, str]]:

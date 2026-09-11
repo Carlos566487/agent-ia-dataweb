@@ -89,10 +89,9 @@ def _fluxo(fontes: list[Resultado], texto: Iterator[str]) -> Iterator[str]:
 
 def _mensagem_erro(erro: Exception) -> str:
     texto = str(erro)
-    if "429" in texto or "RESOURCE_EXHAUSTED" in texto or "rate" in texto.lower():
+    if "429" in texto or "RESOURCE_EXHAUSTED" in texto or "rate" in texto.lower() or "503" in texto or "UNAVAILABLE" in texto:
         return (
-            "⚠️ Limite de requisições atingido. O provedor de IA está temporariamente "
-            "indisponível.\n\n"
+            "⚠️ Limite de requisições ou instabilidade temporária no provedor de IA.\n\n"
             "Aguarde alguns segundos e tente novamente. Se o problema persistir, "
             "verifique o plano e os limites da sua chave de API no arquivo .env."
         )

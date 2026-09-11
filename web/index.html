@@ -209,10 +209,33 @@
     line-height: 1.5;
   }
 
+  .btn-temas-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg-input);
+    color: var(--text-primary);
+    border: 1px solid var(--diniz-red);
+    border-radius: 50px;
+    padding: 9px 16px;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-temas-header:hover {
+    background: var(--diniz-red);
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--glow-color);
+  }
+
   /* ── Suggestions Grid ───────────────────────────────────── */
   .sugestoes-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 16px; /* Gap ajustado */
     margin-bottom: 32px;
   }
@@ -397,9 +420,16 @@
     padding: 18px 24px;
     border-radius: 16px;
     font-size: 15px;
-    line-height: 1.6;
+    line-height: 1.7;
     box-shadow: 0 4px 15px rgba(0,0,0,0.05);
     transition: background 0.3s, color 0.3s, border-color 0.3s;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .balao strong {
+    font-weight: 700;
+    color: inherit;
   }
 
   .linha.usuario .balao {
@@ -461,6 +491,10 @@
   <div class="header-title">MANUAL DO SISTEMA DATAWEB</div>
   <div class="header-actions">
     <span id="estado">carregando...</span>
+    <button id="btn-temas-topo" class="btn-temas-header btn-sugestao" data-pergunta="Quais temas estão disponíveis para pesquisas no sistema DataWeb?" title="Ver todos os manuais e temas disponíveis">
+      <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+      Temas Pesquisáveis
+    </button>
     <button id="btn-nova-conversa">
       <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg>
       Nova Conversa
@@ -481,7 +515,7 @@
 <main id="conversa">
   <div id="boas-vindas" class="welcome-panel">
     <h1>Como posso ajudar?</h1>
-    <p>Faça uma pergunta sobre o Manual do Módulo Caixa DataWeb ou escolha uma das sugestões abaixo.</p>
+    <p>Faça uma pergunta sobre o Sistema DataWeb ou escolha uma das sugestões abaixo.</p>
 
     <div class="sugestoes-grid">
       <!-- Cartão Venda -->
@@ -510,11 +544,24 @@
         <h3>Devolução</h3>
         <p>Como faço um processo de Devolução no sistema DataWeb? Instruções detalhadas para o procedimento de cancelamento de venda.</p>
       </div>
+
+      <!-- Cartão Temas Disponíveis -->
+      <div class="btn-sugestao card-sugestao" data-pergunta="Quais temas estão disponíveis para pesquisas no sistema DataWeb?">
+        <div class="card-icon">
+          <svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+        </div>
+        <h3>Temas Disponíveis</h3>
+        <p>Quais temas posso pesquisar? Conheça todos os manuais de operação e módulos disponíveis.</p>
+      </div>
     </div>
 
     <div class="recentes-populares">
       <h2>Recentes & Populares</h2>
       <ul class="lista-recentes">
+        <li class="btn-sugestao item-recente" data-pergunta="Quais temas estão disponíveis para pesquisas?">
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+          Ex.: quais temas posso pesquisar no sistema?
+        </li>
         <li class="btn-sugestao item-recente" data-pergunta="como faço a baixa de carnê?">
           <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
           Ex.: como faço a baixa de carnê?
@@ -570,7 +617,7 @@ btnTema.addEventListener('click', () => {
 // ── Status do servidor ──
 fetch('/saude').then(r => r.json())
   .then(d => {
-    estado.textContent = `${d.chunks} trechos · ${d.modelo}`;
+    estado.textContent = `${d.chunks} trechos indexados`;
   })
   .catch(() => estado.textContent = 'servidor indisponível');
 
@@ -666,7 +713,7 @@ form.addEventListener('submit', async e => {
 
     const leitor = r.body.getReader();
     const dec = new TextDecoder();
-    let buffer = '', primeiro = true;
+    let buffer = '', primeiro = true, textoAcumulado = '';
 
     while (true) {
       const { done, value } = await leitor.read();
@@ -679,8 +726,9 @@ form.addEventListener('submit', async e => {
         const ev = JSON.parse(parte.slice(6));
         if (ev.tipo === 'fontes') renderFontes(divAgente, ev.dados);
         if (ev.tipo === 'texto') {
-          if (primeiro) { balao.textContent = ''; primeiro = false; }
-          balao.textContent += ev.dados;
+          if (primeiro) { balao.innerHTML = ''; primeiro = false; }
+          textoAcumulado += ev.dados;
+          balao.innerHTML = formatarMarkdown(textoAcumulado);
           rolarParaFim();
         }
       }
@@ -693,6 +741,26 @@ form.addEventListener('submit', async e => {
   enviar.disabled = false;
   entrada.focus();
 });
+
+function formatarMarkdown(txt) {
+  if (!txt) return '';
+  // Escapar caracteres especiais HTML para prevenir injeção
+  let html = txt
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+
+  // Converte **negrito** para <strong>negrito</strong>
+  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+
+  // Converte *itálico* para <em>itálico</em>
+  html = html.replace(/(^|[^*])\*([^*]+?)\*(?=[^*]|$)/g, '$1<em>$2</em>');
+
+  // Converte `código` inline
+  html = html.replace(/`([^`]+?)`/g, '<code style="background:rgba(0,0,0,0.15);padding:2px 6px;border-radius:4px;font-size:0.9em;">$1</code>');
+
+  return html;
+}
 </script>
 </body>
 </html>

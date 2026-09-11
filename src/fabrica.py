@@ -48,7 +48,8 @@ def escolher_gerador() -> GeradorDeResposta:
     ambiente.carregar()
     gemini = ambiente.chave("GOOGLE_GENERATIVE_AI_API_KEY")
     if gemini:
-        return GeradorGemini(gemini)
+        modelo = ambiente.chave("GEMINI_MODEL") or "gemini-3.5-flash-lite"
+        return GeradorGemini(gemini, modelo=modelo)
     return GeradorClaude(ambiente.chave("ANTHROPIC_API_KEY"))
 
 

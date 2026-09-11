@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 class GeradorGemini:
-    def __init__(self, chave: str, modelo: str = "gemini-3.6-flash", max_tokens: int = 16000,
+    def __init__(self, chave: str, modelo: str = "gemini-3.5-flash-lite", max_tokens: int = 16000,
                  raciocinio: str = "low", tentativas: int = 3):
         self.modelo = modelo
         self.max_tokens = max_tokens
@@ -70,7 +70,7 @@ class GeradorGemini:
     @staticmethod
     def _eh_limite(erro: Exception) -> bool:
         texto = str(erro)
-        return "429" in texto or "RESOURCE_EXHAUSTED" in texto
+        return "429" in texto or "RESOURCE_EXHAUSTED" in texto or "503" in texto or "UNAVAILABLE" in texto
 
     @staticmethod
     def _calcular_espera(erro: Exception, tentativa: int) -> float:
