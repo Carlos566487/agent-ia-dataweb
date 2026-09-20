@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 class GeradorGemini:
-    def __init__(self, chave: str, modelo: str = "gemini-3.5-flash-lite", max_tokens: int = 16000,
+    def __init__(self, chave: str, modelo: str = "gemini-3.8-flash", max_tokens: int = 160000,
                  raciocinio: str = "low", tentativas: int = 3):
         self.modelo = modelo
         self.max_tokens = max_tokens

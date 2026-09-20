@@ -14,6 +14,10 @@ build/
 # Storage (dados locais)
 storage/
 
+# Logs do servidor
+server_out.log
+server_err.log
+
 # IDE
 .idea/
 .vscode/

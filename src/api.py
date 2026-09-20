@@ -19,7 +19,7 @@ WEB_DIR = Path(__file__).resolve().parent.parent / "web"
 SEM_CHAVE = (
     "Não há credencial de nenhum provedor configurada, então não consigo redigir a resposta. "
     "Os trechos do manual encontrados para esta pergunta estão listados abaixo.\n\n"
-    "Defina GOOGLE_GENERATIVE_AI_API_KEY ou ANTHROPIC_API_KEY no arquivo .env e reinicie o servidor."
+    "Defina GROK_API_KEY (ou XAI_API_KEY), GOOGLE_GENERATIVE_AI_API_KEY ou ANTHROPIC_API_KEY no arquivo .env e reinicie o servidor."
 )
 
 
@@ -94,6 +94,13 @@ def _mensagem_erro(erro: Exception) -> str:
             "⚠️ Limite de requisições ou instabilidade temporária no provedor de IA.\n\n"
             "Aguarde alguns segundos e tente novamente. Se o problema persistir, "
             "verifique o plano e os limites da sua chave de API no arquivo .env."
+        )
+    if "credits" in texto.lower() or "permission-denied" in texto.lower() or "403" in texto:
+        return (
+            "⚠️ Sem créditos disponíveis no provedor de IA (xAI / Grok).\n\n"
+            "A chave de API do Grok foi configurada com sucesso, mas a sua conta ou time na xAI "
+            "ainda não possui créditos recarregados. Recarregue créditos em https://console.x.ai/ "
+            "para liberar as respostas do modelo."
         )
     return f"Falha ao gerar a resposta: {type(erro).__name__}: {erro}"
 
